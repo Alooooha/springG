@@ -3,11 +3,14 @@ package cc.heroy.springG.test;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import cc.heroy.springG.context.support.ClassPathXmlApplicationContext;
 import cc.heroy.springG.core.io.DefaultResourceLoader;
 import cc.heroy.springG.core.io.Resource;
 import cc.heroy.springG.core.io.ResourceLoader;
@@ -21,17 +24,7 @@ public class TT {
 	@Test
 	public void testResourceLoader() {
 		//
-		ClassPathXmlApplicationContext c = new ClassPathXmlApplicationContext();
-		
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		try {
-			Resource resource = resourceLoader.getResource("classpath:spring.xml");
-			InputStream is = resource.getInputStream();
-//			readInputStream(is);			
-			
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+		ClassPathXmlApplicationContext c = new ClassPathXmlApplicationContext("classpath:spring.xml");
 	}
 	
 	/**
@@ -56,8 +49,22 @@ public class TT {
 	}
 	
 	@Test
-	public void jsoupTest() {
-		
+	public void jsoupTest() throws Throwable {
+		ResourceLoader resourceLoader = new DefaultResourceLoader();
+			Resource resource = resourceLoader.getResource("classpath:spring.xml");
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(resource.getInputStream());
+			Element root = doc.getDocumentElement();
+			System.out.println(root.getChildNodes().item(1).getChildNodes().item(1).getAttributes().item(1).getNodeValue());
+			System.out.println(root.getChildNodes().item(1).getNodeName());
+			
+			
+//			System.out.println(doc.getDocumentElement());
 	}
 	
+	
+	@Test
+	public void doTest() {
+	}
 }

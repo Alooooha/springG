@@ -56,5 +56,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
 			throws IOException;
 	
+	protected String[] getConfigLocations() {
+		return (this.configLocations != null ? this.configLocations : getDefaultConfigLocations());
+	}
+	
+	protected String[] getDefaultConfigLocations() {
+		return null;
+	}
+	
+	protected void setDefualtConfigLocation(String[] configLocations) {
+		this.configLocations = configLocations;
+	}
 	
 }

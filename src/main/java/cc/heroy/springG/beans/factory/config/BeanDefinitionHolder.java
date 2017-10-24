@@ -1,7 +1,5 @@
 package cc.heroy.springG.beans.factory.config;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-
 import cc.heroy.springG.util.Assert;
 
 /**

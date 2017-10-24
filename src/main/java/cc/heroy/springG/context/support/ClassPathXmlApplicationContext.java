@@ -9,6 +9,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 	
 	//spring 加载方法，用于。。。
 	public ClassPathXmlApplicationContext(String[] configLocations,boolean refresh ) {
+		this.setDefualtConfigLocation(configLocations);
 		if(refresh)
 			refresh();
 	}
