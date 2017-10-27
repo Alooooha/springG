@@ -16,9 +16,12 @@ public abstract class AbstractApplicationContext {
 		synchronized (this.startupShutdownMonitor) {
 			//源码中有多个方法，我只写出其中几个核心方法
 			
-			
-			//spring初始化核心方法，这里完成了： XML 读取为Resource ， Resource 解析出 BeanDefinition ， BeanDefinition 注册在 BeanFactory
+			//刷新spring上下文的Bean工厂
+			//这里完成了： XML 读取为Resource ， Resource 解析出 BeanDefinition ， BeanDefinition 注册在 BeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+			
+			//完成所有对非懒加载的Bean初始化
+			finishBeanFactoryInitialization(beanFactory);
 			
 		}
 	}
@@ -34,6 +37,15 @@ public abstract class AbstractApplicationContext {
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		return beanFactory;
 	}
+	
+	
+	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+		//这里有一些对beanFactory的设置，关系不大
+		//核心方法
+		beanFactory.preInstantiateSingletons();
+	}
+	
+	
 	
 	protected abstract void refreshBeanFactory();
 	

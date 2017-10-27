@@ -3,6 +3,12 @@ package cc.heroy.springG.test;
 public class User {
 	private int id;
 	private String name ;
+	
+	private User() {
+		this.id = 5;
+		this.name = "BeiwEi";
+	}
+	
 	public int getId() {
 		return id;
 	}

@@ -17,4 +17,10 @@ public interface BeanDefinition {
 	void setDependsOn(String... dependsOn);
 	
 	boolean isSingleton();
+	
+	boolean isAbstract();
+	
+	public Class<?> getBeanClass();
+	
+	ConstructorArgumentValues getConstructorArgumentValues();
 }

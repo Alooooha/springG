@@ -1,7 +1,7 @@
-<!--  -->
-
 <beans>
-<bean id="user" class="cc.heroy.springG.test.User" ></bean>
+<bean id="user" name="a,b,c" class="cc.heroy.springG.test.User" >
+	<constructor-arg index="0" value="22"></constructor-arg>
+</bean>
 <bean name="user1" class="cc.heroy.springG.test.User" ></bean>
-<bean id="user2" class="cc.heroy.springG.test.U" ></bean>
+<bean id="user2" class="cc.heroy.springG.test.User" ></bean>
 </beans>

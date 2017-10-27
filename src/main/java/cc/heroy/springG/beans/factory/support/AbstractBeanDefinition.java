@@ -1,14 +1,19 @@
 package cc.heroy.springG.beans.factory.support;
 
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
+import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
 import cc.heroy.springG.util.Assert;
 
 /**
  * 储存Bean的属性信息（很重要的类），更多的用于Bean的加载阶段
  * 
- * beanClass : 存放class类或stirng类，在加载beanDefinition时，若类加载器为空
+ * 1、beanClass : 存放class类或stirng类，在加载beanDefinition时，若类加载器为空
  * 			     无法反射生产class类，则这里的意思是beanClassName，所以在生产bean
  * 			     对象时要对beanClass进行判断   “instanceof”
+ * 
+ * 2、abstract、lazyInit默认为false
+ * 
+ * 
  * 
  */
 public abstract class AbstractBeanDefinition implements BeanDefinition{
@@ -26,6 +31,8 @@ public abstract class AbstractBeanDefinition implements BeanDefinition{
 	private String[] dependsOn;
 	
 	private boolean lazyInit = false;
+	
+	private ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
 	
 	public void setBeanClass(Class<?> beanClass) {
 		this.beanClass = beanClass;
@@ -67,18 +74,24 @@ public abstract class AbstractBeanDefinition implements BeanDefinition{
 	}
 
 	public boolean isSingleton() {
-		return Assert.isEqual(this.scope, "singleton");
+		if(scope.equals("singleton") || Assert.isEqual(scope, SCOPE_DEFAULT))
+			return true;
+		return false;
 	}
 	
 	public void setBeanClassName(String beanClassName) {
 		this.beanClass = beanClassName;
 	}
 
-	public boolean isAbstractFlag() {
+	public boolean isAbstract() {
 		return abstractFlag;
 	}
 
-	public void setAbstractFlag(boolean abstractFlag) {
+	public void setAbstract(boolean abstractFlag) {
 		this.abstractFlag = abstractFlag;
+	}
+	
+	public ConstructorArgumentValues getConstructorArgumentValues() {
+		return this.constructorArgumentValues;
 	}
 }

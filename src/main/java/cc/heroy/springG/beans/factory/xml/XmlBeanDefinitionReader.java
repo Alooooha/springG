@@ -15,13 +15,10 @@ import cc.heroy.springG.core.io.ResourceLoader;
 import cc.heroy.springG.util.Assert;
 
 public class XmlBeanDefinitionReader extends DefaultBeanDefinitionDocumentReader{
-
-	DefaultListableBeanFactory beanFactory ;
 	
 	public XmlBeanDefinitionReader(DefaultListableBeanFactory beanFactory) {
-		this.beanFactory = beanFactory ;
+		this.setBeanFactory(beanFactory) ;
 	}
-	
 	
 	public int loadBeanDefinitions(String... locations) throws Throwable {
 		Assert.notNull(locations);

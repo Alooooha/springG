@@ -13,7 +13,9 @@ import org.w3c.dom.NodeList;
 
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
 import cc.heroy.springG.beans.factory.config.BeanDefinitionHolder;
+import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
 import cc.heroy.springG.beans.factory.support.AbstractBeanDefinition;
+import cc.heroy.springG.beans.factory.support.DefaultListableBeanFactory;
 import cc.heroy.springG.beans.factory.support.GenericBeanDefinition;
 import cc.heroy.springG.util.StringUtils;
 
@@ -25,9 +27,9 @@ public class DefaultBeanDefinitionDocumentReader {
 	public static final String NESTED_BEANS_ELEMENT = "beans";
 	public static final String TRUE_VALUE = "true";
 	public static final String NAME_ATTRIBUTE = "name";
-
+	public static final String INDEX_ATTRIBUTE = "index";
 	public static final String META_ELEMENT = "meta";
-
+	public static final String TYPE_ATTRIBUTE = "type";
 	public static final String ID_ATTRIBUTE = "id";
 
 	public static final String PARENT_ATTRIBUTE = "parent";
@@ -43,9 +45,10 @@ public class DefaultBeanDefinitionDocumentReader {
 //	private static final String SINGLETON_ATTRIBUTE = "singleton";
 	//分隔符
 	private static final String MULTI_VALUE_ATTRIBUTE_DELIMITERS = ",";
+//	private static final String BeanDefinitionHolder = null;
 	//存放被使用的beanName
 	private final Set<String> usedNames = new HashSet<String>();
-	
+	private DefaultListableBeanFactory beanFactory ;
 	public void registerBeanDefinitions(Document doc) throws Exception {
 		Element root = doc.getDocumentElement();
 		doRegisterBeanDefinitions(root);
@@ -53,6 +56,7 @@ public class DefaultBeanDefinitionDocumentReader {
 	
 	protected void doRegisterBeanDefinitions(Element root) throws Exception {
 		parseBeanDefinitions(root);
+System.out.println("解析配置文件完成!");
 	}
 	
 	/**
@@ -71,7 +75,6 @@ public class DefaultBeanDefinitionDocumentReader {
 				Element ele =(Element) node;
 				parseDefualtElement(ele);
 			}
-			
 		}
 	}
 	
@@ -108,7 +111,9 @@ public class DefaultBeanDefinitionDocumentReader {
 		//暂时没有实现
 		
 		//这里写注册
-		System.out.println("注册 ！");
+		registerBeanDefinition(bdHolder);
+		
+System.out.println("注册 ！");
 	}
 	
 	/**
@@ -220,7 +225,10 @@ public class DefaultBeanDefinitionDocumentReader {
 			parseBeanDefinitionAttributes(ele,beanName,bd);
 			
 			//解析constructor-arg (暂时没完成，等写bean加载阶段了解BeanDefinition结构再回头写)
-			//parseConstructorArgElements(ele,bd);
+			parseConstructorArgElements(ele,bd);
+			
+			
+			
 			//解析参数等
 			
 			//设置resource
@@ -281,7 +289,7 @@ public class DefaultBeanDefinitionDocumentReader {
 		
 		//abstract (boolean)
 		if(ele.hasAttribute(ABSTRACT_ATTRIBUTE)) {
-			bd.setAbstractFlag(TRUE_VALUE.equals(ele.getAttribute(ABSTRACT_ATTRIBUTE)));
+			bd.setAbstract(TRUE_VALUE.equals(ele.getAttribute(ABSTRACT_ATTRIBUTE)));
 		}
 		
 		//lazy-init (defualt , true ,false)
@@ -327,10 +335,94 @@ public class DefaultBeanDefinitionDocumentReader {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (nodeNameEquals(node, CONSTRUCTOR_ARG_ELEMENT)) {
-				//
-//				parseConstructorArgElement((Element) node, bd);
+				//解析constructor-arg节点，将数据存到BeanDefinition中
+				parseConstructorArgElement((Element) node, bd);
 			}
 		}
+	}
+	
+	/**
+	 * 	解析constructor-arg的具体实现：
+	 * 	1、解析出 index、type、name属性
+	 *  2、判断index是否为空
+	 *  	一：不为空
+	 *  		1、判断index是否合法
+	 *  		2、获取value，并封装成ValueHolder对象
+	 *  		3、添加type、name属性
+	 *  		4、在BeanDefinition的ConstructorArgumentValue对象中添加属性
+	 *  	
+	 *  	二：index为空
+	 *  		执行2、3、4(存储位置不同)
+	 * 
+	 */
+	protected void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+		String indexAttr = ele.getAttribute(INDEX_ATTRIBUTE);
+		String typeAttr = ele.getAttribute(TYPE_ATTRIBUTE);
+		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
+		
+		if(indexAttr != null && !"".equals(indexAttr)) {
+			int index = Integer.parseInt(indexAttr);
+			//判断index是否合法
+			if(index < 0 ) {
+				try {
+					throw new Exception("index 不能为负数");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			//这里有个parsePropertyValue()方法，用于解析各种参数值，暂时不用
+			//现在默认把值放在constructor-arg标签下
+			Object value = ele.getAttribute("value");
+			//生成ConstructorArgumentValues.ValueHolder信息类
+			ConstructorArgumentValues.ValueHolder valueHolder = new ConstructorArgumentValues.ValueHolder(value);
+			
+			//添加type、name属性
+			if(!"".equals(typeAttr)) {
+				valueHolder.setType(typeAttr);
+			}
+			if(!"".equals(nameAttr)) {
+				valueHolder.setName(nameAttr);
+			}
+			
+			//在BeanDefinition的ConstructorArgumentValues属性下添加值
+			bd.getConstructorArgumentValues().addIndexedArgumentValue(index, valueHolder);
+		}
+		else {
+			Object value = ele.getAttribute("value");
+			ConstructorArgumentValues.ValueHolder valueHolder = new ConstructorArgumentValues.ValueHolder(value);
+			if(!"".equals(typeAttr)) {
+				valueHolder.setType(typeAttr);
+			}
+			if(!"".equals(nameAttr)) {
+				valueHolder.setName(nameAttr);
+			}
+			bd.getConstructorArgumentValues().addGenericArgumentValue(valueHolder);
+		}
+	}
+
+	/**
+	 * 通过BeanDefinitionHolder注册到BeanFactory
+	 * 两步：
+	 * 	1.注册BeanDefinition到BeanFactory的beanDefinitionMap、beanName注册到beanDefinitonNames
+	 *  2.注册aliases到aliasMap
+	 * 
+	 * @param bdHolder
+	 */
+	public void registerBeanDefinition(BeanDefinitionHolder bdHolder){
+		DefaultListableBeanFactory beanFactory = getBeanFactory();
+		String beanName = bdHolder.getBeanName();
+		//注册bean定义
+		beanFactory.registerBeanDefinition(beanName, bdHolder.getBeanDefinition());
+		//注册别名
+		String[] aliases = bdHolder.getAliases();
+		for(String alias : aliases) {
+			try {
+				beanFactory.registerAlias(beanName, alias);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	/**
@@ -341,5 +433,13 @@ public class DefaultBeanDefinitionDocumentReader {
 		if(n != null)
 			return n.equals(nodeName);
 		return false;
+	}
+
+	public DefaultListableBeanFactory getBeanFactory() {
+		return beanFactory;
+	}
+
+	public void setBeanFactory(DefaultListableBeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
 	}
 }
