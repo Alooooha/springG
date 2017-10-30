@@ -145,7 +145,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	@Override
 	protected void createBeanInstance(String beanName, BeanDefinition bd) {
 		//配置文件方式
-		autoreConstructor(beanName,bd);
+//		autoreConstructor(beanName,bd);
 		//默认构造方法
 		instantiateBean(beanName,bd);
 		
@@ -197,34 +197,76 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	protected void autoreConstructor(String beanName,BeanDefinition bd ) {
 		Constructor<?> constructorToUse = null;
 		Set<Class> t = new HashSet<Class>();
+		List<Constructor<?>> tempList = new ArrayList<Constructor<?>>();
 		//取得存储构造信息的类
 		try {
 		ConstructorArgumentValues cargs = bd.getConstructorArgumentValues();
 		int pi = cargs.getIndexedArgumentValues().size();
 		//循环取得参数内容
-		Map<Integer,ValueHolder> maps = cargs.getIndexedArgumentValues();
-		
+		Map<Integer,ValueHolder> indexArg = cargs.getIndexedArgumentValues();
+		List<ValueHolder> genericArg = cargs.getGenericArgumentValue();
 		Class<?> clazz = bd.getBeanClass();
 		if(clazz.isInterface())
 			throw new Exception(clazz+"是接口!");
 		Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-		//寻找合适的构造器
+		
+		//选择参数内容
+		
+		//寻找合适的构造器(有index型)
 		for(Constructor<?> constructor : constructors) {
-			if (constructor.getParameterCount() == maps.size()) {
-				constructorToUse = constructor;
-				break;
+			if (constructor.getParameterCount() == indexArg.size()) {
+				tempList.add(constructor);
 			}
 		}
 		
-		if(constructorToUse != null) {
-//			constructorToUse.
+		//判断参数个数相同的构造器个数
+		if(tempList.size() == 0) {
+			return ;
 		}
-		
-		
-		}catch(Exception e) {
+		else if(tempList.size() == 1) {
+			constructorToUse = tempList.get(0);
+		}
+		else {
+			//通过参数类型选择构造器
+			for(Constructor<?> c : tempList) {
+				boolean b = true;
+				Class<?>[] types = c.getParameterTypes();
+				for(int i = 0;i<indexArg.size();i++) {
+					ValueHolder valueHolder = indexArg.get(i);
+					Class<?> parameter = types[i];
+					if(!match(valueHolder,parameter)) {
+						b = false;
+						break;
+					}
+				}
+				if(b) {
+					constructorToUse = c ;
+					break;
+				}
+			}
+			
+			if(constructorToUse != null) {
+				//获取值
+				Object[] values ;
+				
+				constructorToUse.newInstance();
+			}
+		}
+		}
+		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	
+	protected boolean match(ValueHolder vh,Class<?> parameter) {
+		//判断类型是否相等
+		String type = vh.getType();
+		if(type != null) {
+			if(!type.equals(parameter.getName())) {
+				return false;
+			}
+		}
+		return true;
+		
+	}
 }

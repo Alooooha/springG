@@ -62,9 +62,4 @@ public class TT {
 			
 //			System.out.println(doc.getDocumentElement());
 	}
-	
-	
-	@Test
-	public void doTest() {
-	}
 }
