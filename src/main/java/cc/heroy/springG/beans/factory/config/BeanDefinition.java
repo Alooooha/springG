@@ -1,5 +1,7 @@
 package cc.heroy.springG.beans.factory.config;
 
+import cc.heroy.springG.beans.MutablePropertyValues;
+
 public interface BeanDefinition {
 
 //	String getBeanClassName();
@@ -23,4 +25,8 @@ public interface BeanDefinition {
 	public Class<?> getBeanClass();
 	
 	ConstructorArgumentValues getConstructorArgumentValues();
+	
+	MutablePropertyValues getPropertyValues();
+	
+	void setPropertyValues(MutablePropertyValues propertyValues);
 }

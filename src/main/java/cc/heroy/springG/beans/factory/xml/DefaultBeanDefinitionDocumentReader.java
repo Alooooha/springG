@@ -11,6 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import cc.heroy.springG.beans.PropertyValue;
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
 import cc.heroy.springG.beans.factory.config.BeanDefinitionHolder;
 import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
@@ -28,12 +29,11 @@ public class DefaultBeanDefinitionDocumentReader {
 	public static final String TRUE_VALUE = "true";
 	public static final String NAME_ATTRIBUTE = "name";
 	public static final String INDEX_ATTRIBUTE = "index";
-	public static final String META_ELEMENT = "meta";
 	public static final String TYPE_ATTRIBUTE = "type";
 	public static final String ID_ATTRIBUTE = "id";
 
 	public static final String PARENT_ATTRIBUTE = "parent";
-
+	public static final String VALUE_ATTRIBUTE = "value";
 	public static final String CLASS_ATTRIBUTE = "class";
 	public static final String DEPENDS_ON_ATTRIBUTE = "depends-on";
 	public static final String ABSTRACT_ATTRIBUTE = "abstract";
@@ -41,7 +41,9 @@ public class DefaultBeanDefinitionDocumentReader {
 	public static final String SCOPE_ATTRIBUTE = "scope";
 	public static final String LAZY_INIT_ATTRIBUTE = "lazy-init";
 	public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
-
+	public static final String PROPERTY_ELEMENT = "property";
+	public static final String LIST_ATTRIBUTE = "list";
+	
 //	private static final String SINGLETON_ATTRIBUTE = "singleton";
 	//分隔符
 	private static final String MULTI_VALUE_ATTRIBUTE_DELIMITERS = ",";
@@ -227,9 +229,8 @@ System.out.println("注册 ！");
 			//解析constructor-arg (暂时没完成，等写bean加载阶段了解BeanDefinition结构再回头写)
 			parseConstructorArgElements(ele,bd);
 			
-			
-			
-			//解析参数等
+			//解析property等
+			parsePropertyElements(ele,bd);
 			
 			//设置resource
 			
@@ -342,6 +343,49 @@ System.out.println("注册 ！");
 	}
 	
 	/**
+	 * 解析property节点
+	 */
+	public void parsePropertyElements(Element beanEle ,BeanDefinition bd) {
+		NodeList n1 = beanEle.getChildNodes();
+		for(int i = 0;i < n1.getLength() ; i++) {
+			Node node = n1.item(i);
+			if(nodeNameEquals(node, PROPERTY_ELEMENT)) {
+				try {
+					if(node instanceof Element)
+						parsePropertyElement((Element)node, bd);
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 具体解析property标签
+	 * @throws Exception 
+	 */
+	protected void parsePropertyElement(Element ele, BeanDefinition bd) throws Exception {
+		//获取property的name属性
+		String propertyName = ele.getAttribute(NAME_ATTRIBUTE);
+		//判断name是否为空
+		if(propertyName == null || "".equals(propertyName)) {
+			throw new Exception("property 中name不能为空！");
+		}
+		
+		//判断是否重复定义
+		if(bd.getPropertyValues().contains(propertyName)) {
+			throw new Exception("重复定义property ："+ propertyName);
+		}
+		
+		//解析propertyValue的value
+		Object obj = parsePropertyValue(ele,bd,propertyName);
+		
+		PropertyValue pv = new PropertyValue(propertyName,obj);
+		bd.getPropertyValues().addPropertyValue(pv);
+	}
+
+	/**
 	 * 	解析constructor-arg的具体实现：
 	 * 	1、解析出 index、type、name属性
 	 *  2、判断index是否为空
@@ -398,6 +442,64 @@ System.out.println("注册 ！");
 			}
 			bd.getConstructorArgumentValues().addGenericArgumentValue(valueHolder);
 		}
+	}
+	
+	/**
+	 * 	解析property节点中的value值
+	 * 	目前只能解析两种形式的属性
+	 * 1、value
+	 * 		value包含两种写法：<value>18</value> (在property节点下构建新的节点)
+	 * 						  <property name="age" value="18"></property>(在property中直接定义value)
+	 * 2 、list
+	 * 		<property name = "books">
+	 * 			<list>
+	 * 				<value>线性代数</value>
+	 * 				<value>高等数学</value>
+	 * 				<value>概率论</value>
+	 * 			</list>
+	 * 		</property>
+	 */
+	protected Object parsePropertyValue(Element ele, BeanDefinition bd, String propertyName) {
+		//判断是否为value解析的第二种情况
+		String value = ele.getAttribute(VALUE_ATTRIBUTE);
+		if(value != null && !value.equals("")) {
+			return value;
+		}
+		//得到子节点
+		NodeList n1 = ele.getChildNodes();
+		Element subElement = null;
+		for(int i = 0; i < n1.getLength(); i++) {
+			Node node = n1.item(i);
+			if(node instanceof Element) {
+				subElement = (Element) node;
+			}
+		}
+		//解析value、list
+		boolean hasValueAttribute = subElement.getTagName().equals(VALUE_ATTRIBUTE);
+		boolean hasListAttribute = subElement.getTagName().equals(LIST_ATTRIBUTE);
+		if( (hasValueAttribute && hasListAttribute) || (!hasValueAttribute && !hasListAttribute) || subElement == null) {
+			try {
+			throw new Exception("value 和 list标签只能有一个");
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		//解析value标签
+		if(hasValueAttribute) {
+			String v = subElement.getTextContent();
+			return v;
+		}else if(hasListAttribute) {
+			NodeList nodeList = ele.getChildNodes();
+			List<String> list = new ArrayList<String>();
+			for(int i = 0; i < nodeList.getLength(); i++) {
+				Node n = nodeList.item(i);
+				String v = n.getTextContent();
+				list.add(v);
+			}
+			return list;
+		}
+		
+		return null;
 	}
 
 	/**

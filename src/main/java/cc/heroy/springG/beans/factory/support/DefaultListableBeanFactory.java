@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cc.heroy.springG.beans.BeanWrapper;
+import cc.heroy.springG.beans.BeanWrapperImpl;
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
 import cc.heroy.springG.beans.factory.config.ConfigurableListableBeanFactory;
 import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
@@ -127,10 +129,13 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 		//核心方法  doCreateBean(beanName,bd),在这里直接写实现
 		if(bd.isSingleton()) {
 			//从factoryBeanInstanceCache中找是否存在该bean
+			
 		}
 		//获取Bean实例，封装成BeanWrapper
-		createBeanInstance(beanName,bd);
+		BeanWrapper instanceWrapper = createBeanInstance(beanName,bd);
 		
+		//依赖注入属性
+		populateBean(beanName , bd , instanceWrapper);
 		
 		return null;
 	}
@@ -143,11 +148,13 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	 * 返回BeanWrapper
 	 */
 	@Override
-	protected void createBeanInstance(String beanName, BeanDefinition bd) {
+	protected BeanWrapper createBeanInstance(String beanName, BeanDefinition bd) {
+		BeanWrapper instanceWrapper = null;
 		//配置文件方式
 //		autoreConstructor(beanName,bd);
 		//默认构造方法
-		instantiateBean(beanName,bd);
+		instanceWrapper = instantiateBean(beanName,bd);
+		return instanceWrapper;
 		
 	}
 	
@@ -160,9 +167,9 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	 * 
 	 * 返回：BeanWrapper
 	 */
-	protected void instantiateBean(String beanName,BeanDefinition bd) {
+	protected BeanWrapper instantiateBean(String beanName,BeanDefinition bd) {
 		try {
-		Object beanInstance ;
+		Object beanInstance = null;
 		
 		//获取Class类
 		Class<?> clazz = bd.getBeanClass();
@@ -185,10 +192,13 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 			beanInstance = constructor.newInstance();
 		}
 		//包装成BeanWrapper类
+		BeanWrapper bw = new BeanWrapperImpl(beanInstance);
+		return bw;
 		
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	/**
@@ -257,6 +267,16 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * 依赖注入Bean属性实现方法
+	 * 	1、首先获取BeanDefinition的propertyValue属性
+	 * 
+	 */
+	protected void populateBean(String beanName, BeanDefinition bd, BeanWrapper instanceWrapper) {
+		
+	}
+
 	
 	protected boolean match(ValueHolder vh,Class<?> parameter) {
 		//判断类型是否相等

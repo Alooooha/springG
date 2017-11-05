@@ -1,5 +1,6 @@
 package cc.heroy.springG.beans.factory.support;
 
+import cc.heroy.springG.beans.MutablePropertyValues;
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
 import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
 import cc.heroy.springG.util.Assert;
@@ -18,7 +19,7 @@ import cc.heroy.springG.util.Assert;
  */
 public abstract class AbstractBeanDefinition implements BeanDefinition{
 	
-	//暂时只有这么几个，后面加吧
+	//根据需要添加的属性
 	
 	private volatile Object beanClass;
 	
@@ -33,6 +34,8 @@ public abstract class AbstractBeanDefinition implements BeanDefinition{
 	private boolean lazyInit = false;
 	
 	private ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
+	
+	private MutablePropertyValues propertyValues = new MutablePropertyValues();
 	
 	public void setBeanClass(Class<?> beanClass) {
 		this.beanClass = beanClass;
@@ -94,4 +97,13 @@ public abstract class AbstractBeanDefinition implements BeanDefinition{
 	public ConstructorArgumentValues getConstructorArgumentValues() {
 		return this.constructorArgumentValues;
 	}
+	
+	public void setPropertyValues(MutablePropertyValues propertyValues) {
+		this.propertyValues = (propertyValues != null ? propertyValues : new MutablePropertyValues());
+	}
+	
+	public MutablePropertyValues getPropertyValues() {
+		return this.propertyValues;
+	}
+
 }

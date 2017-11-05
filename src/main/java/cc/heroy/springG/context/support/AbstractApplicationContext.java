@@ -20,7 +20,7 @@ public abstract class AbstractApplicationContext {
 			//这里完成了： XML 读取为Resource ， Resource 解析出 BeanDefinition ， BeanDefinition 注册在 BeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 			
-			//完成所有对非懒加载的Bean初始化
+			//完成所有对非懒加载的Bean初始化（lazy-init = false）
 			finishBeanFactoryInitialization(beanFactory);
 			
 		}

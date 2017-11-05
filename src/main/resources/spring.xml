@@ -1,7 +1,12 @@
 <beans>
 <bean id="user" name="a,b,c" class="cc.heroy.springG.test.User" >
-	<constructor-arg index="0" value="22"></constructor-arg>
+	<property name="age" value="abc">
+	</property>
 </bean>
-<bean name="user1" class="cc.heroy.springG.test.User" ></bean>
+<bean name="user1" class="cc.heroy.springG.test.User" >
+	<property name="name">
+		<value>北纬</value>
+	</property>
+</bean>
 <bean id="user2" class="cc.heroy.springG.test.User" ></bean>
 </beans>
