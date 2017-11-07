@@ -498,7 +498,6 @@ System.out.println("注册 ！");
 			}
 			return list;
 		}
-		
 		return null;
 	}
 

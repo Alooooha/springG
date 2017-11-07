@@ -2,12 +2,11 @@ package cc.heroy.springG.context.support;
 
 
 import cc.heroy.springG.beans.factory.config.ConfigurableListableBeanFactory;
-import cc.heroy.springG.beans.factory.support.DefaultListableBeanFactory;
 
 public abstract class AbstractApplicationContext {
 
 	/**beanFactory 在源码中是 AbstractApplicationContext 继承的DefaultResourceLoader抽象类中属性，简便起见写在这 */
-	private DefaultListableBeanFactory beanFactory;
+//	private DefaultListableBeanFactory beanFactory;
 	
 	/** 同步监听器 ， 用于对refresh() 和 destory() 同步*/
 	private final Object startupShutdownMonitor = new Object();
@@ -23,6 +22,7 @@ public abstract class AbstractApplicationContext {
 			//完成所有对非懒加载的Bean初始化（lazy-init = false）
 			finishBeanFactoryInitialization(beanFactory);
 			
+System.out.println("THE WORLD !");
 		}
 	}
 	
@@ -51,5 +51,6 @@ public abstract class AbstractApplicationContext {
 	
 	public abstract ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
 	
+	public abstract Object getBean(String beanName);
 	
 }

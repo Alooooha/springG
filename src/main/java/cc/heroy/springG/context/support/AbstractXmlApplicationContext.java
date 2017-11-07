@@ -1,10 +1,5 @@
 package cc.heroy.springG.context.support;
 
-import java.io.IOException;
-
-import org.springframework.beans.BeansException;
-import org.springframework.core.io.Resource;
-
 import cc.heroy.springG.beans.factory.support.DefaultListableBeanFactory;
 import cc.heroy.springG.beans.factory.xml.XmlBeanDefinitionReader;
 
@@ -22,13 +17,17 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableA
 	 * 
 	 */
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
 		//创建BeanDefinitionReader,并将BeanFactory传入其中
 		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
-		loadBeanDefinitions(beanDefinitionReader);
+		try {
+			loadBeanDefinitions(beanDefinitionReader);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws Exception {
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
 			try {

@@ -10,4 +10,6 @@ public interface BeanWrapper {
 	
 	Class<?> getWrappedClass();
 	
+	void setPropertyValues(MutablePropertyValues pvs);
+	
 }

@@ -1,14 +1,11 @@
 package cc.heroy.springG.test;
 
+import java.util.List;
+
 public class User {
 	private int id;
 	private String name ;
-	
-	private User() {
-		this.id = 5;
-		this.name = "BeiwEi";
-	}
-	
+	private List<String> books;
 	public int getId() {
 		return id;
 	}
@@ -21,4 +18,11 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public List<String> getBooks() {
+		return books;
+	}
+	public void setBooks(List<String> books) {
+		this.books = books;
+	}
+	
 }

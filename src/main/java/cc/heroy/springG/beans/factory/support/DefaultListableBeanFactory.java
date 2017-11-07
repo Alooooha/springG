@@ -2,8 +2,6 @@ package cc.heroy.springG.beans.factory.support;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cc.heroy.springG.beans.BeanWrapper;
 import cc.heroy.springG.beans.BeanWrapperImpl;
+import cc.heroy.springG.beans.MutablePropertyValues;
+import cc.heroy.springG.beans.PropertyValue;
 import cc.heroy.springG.beans.factory.config.BeanDefinition;
 import cc.heroy.springG.beans.factory.config.ConfigurableListableBeanFactory;
 import cc.heroy.springG.beans.factory.config.ConstructorArgumentValues;
@@ -36,7 +36,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(256);
 	
 	//DefaultSingletonBeanRegistry  存储bean名称-->预加载bean实现
-	private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
+//	private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
 	
 	//DefaultSingletonBeanRegistry   存储注册过的Bean名
 	private final Set<String> registeredSingletons = new LinkedHashSet<String>(256);
@@ -97,7 +97,6 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 				//这里有个判断，isFactroyBean()
 				//如果true，将用工厂方法实例化Bean
 				//未实现
-				
 				try {
 					getBean(beanName);
 				} catch (Exception e) {
@@ -129,15 +128,17 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 		//核心方法  doCreateBean(beanName,bd),在这里直接写实现
 		if(bd.isSingleton()) {
 			//从factoryBeanInstanceCache中找是否存在该bean
-			
 		}
 		//获取Bean实例，封装成BeanWrapper
 		BeanWrapper instanceWrapper = createBeanInstance(beanName,bd);
 		
-		//依赖注入属性
+		//依赖注入属性(BeanWrapper的作用在这)
 		populateBean(beanName , bd , instanceWrapper);
 		
-		return null;
+		//注册bean实例
+		Object beanInstance = instanceWrapper.getWrapperedInstance();
+		registerBean(beanName, beanInstance);
+		return instanceWrapper.getWrapperedInstance();
 	}
 
 	/**
@@ -157,6 +158,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 		return instanceWrapper;
 		
 	}
+	
 	
 	/**
 	 * 默认构造方法实现
@@ -206,15 +208,15 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	 */
 	protected void autoreConstructor(String beanName,BeanDefinition bd ) {
 		Constructor<?> constructorToUse = null;
-		Set<Class> t = new HashSet<Class>();
+//		Set<Class> t = new HashSet<Class>();
 		List<Constructor<?>> tempList = new ArrayList<Constructor<?>>();
 		//取得存储构造信息的类
 		try {
 		ConstructorArgumentValues cargs = bd.getConstructorArgumentValues();
-		int pi = cargs.getIndexedArgumentValues().size();
+//		int pi = cargs.getIndexedArgumentValues().size();
 		//循环取得参数内容
 		Map<Integer,ValueHolder> indexArg = cargs.getIndexedArgumentValues();
-		List<ValueHolder> genericArg = cargs.getGenericArgumentValue();
+//		List<ValueHolder> genericArg = cargs.getGenericArgumentValue();
 		Class<?> clazz = bd.getBeanClass();
 		if(clazz.isInterface())
 			throw new Exception(clazz+"是接口!");
@@ -257,7 +259,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 			
 			if(constructorToUse != null) {
 				//获取值
-				Object[] values ;
+//				Object[] values ;
 				
 				constructorToUse.newInstance();
 			}
@@ -271,10 +273,54 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 	/**
 	 * 依赖注入Bean属性实现方法
 	 * 	1、首先获取BeanDefinition的propertyValue属性
-	 * 
+	 *  2、判断BeanWrapper是否为空
+	 *  3、一系列其它属性注入方法
+	 *  4、调用applyPropertyValues方法
 	 */
-	protected void populateBean(String beanName, BeanDefinition bd, BeanWrapper instanceWrapper) {
+	protected void populateBean(String beanName, BeanDefinition bd, BeanWrapper bw) {
+		//获取property属性
+		MutablePropertyValues pvs = bd.getPropertyValues();
 		
+		//判断BeanWrapper 是否为空
+		if(bw == null) {
+			//bw为空，如果pvs不为空，则抛出异常
+			if(!pvs.isEmpty()) {
+				try {
+					throw new Exception(beanName+"实例为空,但属性配置不为空！");
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				return ;
+			}
+		}
+		
+		//一系列属性检查，如bean的后置处理器、bean的自动装配等
+		
+		//最后通过setter方法配置属性
+		applyPropertyValues(beanName,bd,bw,pvs);
+		
+	}
+	
+	/**
+	 * 具体装载property的方法实现
+	 */
+	protected void applyPropertyValues(String beanName, BeanDefinition bd, BeanWrapper bw, MutablePropertyValues pvs) {
+		//判断pvs
+		if(pvs == null || pvs.isEmpty()) {
+			return ;
+		}
+		//获取属性对象数组
+		List<PropertyValue> original = pvs.getPropertyValueList();
+		//deepCopy：这里没有直接操作原始数据，而是拷贝数据值集合，在这个基础上进行数据之间的操作。
+		List<PropertyValue> deepCopy = new ArrayList<PropertyValue>();
+		for(PropertyValue pv : original) {
+			Object originValue = pv.getValue();
+			deepCopy.add(new PropertyValue(pv.getName(),originValue));
+		}
+		MutablePropertyValues mpvs = new MutablePropertyValues(deepCopy);
+		bw.setPropertyValues(mpvs);
 	}
 
 	
@@ -287,6 +333,48 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 			}
 		}
 		return true;
+	}
+	
+	protected void registerBean(String beanName,Object beanInstance) {
+		//这里其实应该先放在预加载bean集合，即earlySingletonObjects(未深入)
 		
+		//注册到单例Bean容器中
+		this.singletonObjects.put(beanName, beanInstance);
+		//注册到单例BeanName集合中
+		this.registeredSingletons.add(beanName);
+	}
+
+	/**
+	 * 将几个getBean()重载方法整合在一起
+	 * 首先应该判断容器中是否已经有了Bean单例
+	 */
+	public Object getBean(String name){
+		
+		//查看注册beanName集合中是否有Baen
+		if(this.registeredSingletons.contains(name)) {
+			//直接返回beanName
+			return this.singletonObjects.get(name);
+		}
+		
+		//这里牵扯出spring关于循环引用的处理，我不是很理解
+		//Object sharedInstance = getSingleton(name);
+		
+		//获取BeanDefinition
+		BeanDefinition bd = getBeanDefinitionMap().get(name);
+		String[] dependsOn = bd.getDependsOn();
+		
+		//如果有依赖Bean，先实例依赖Bean
+		if(dependsOn != null) {
+			for(String dependsOnBean :dependsOn) {
+				//注册依赖bean
+				
+				getBean(dependsOnBean);
+			}
+		}
+		
+		//创建Bean(这里应该分scope、单例和原型)
+		Object bean = createBean(name,bd);
+		
+		return bean;
 	}
 }

@@ -14,12 +14,20 @@ public class MutablePropertyValues {
 		this.propertyValueList = new ArrayList<PropertyValue>();
 	}
 	
+	public MutablePropertyValues(List<PropertyValue> pvs) {
+		this.propertyValueList = pvs ;
+	}
+	
 	public List<PropertyValue> getPropertyValueList(){
 		return this.propertyValueList;
 	}
 	
 	public int size() {
 		return this.propertyValueList.size();
+	}
+	
+	public boolean isEmpty() {
+		return propertyValueList.isEmpty();
 	}
 	
 	public MutablePropertyValues addPropertyValue(PropertyValue pv) {
