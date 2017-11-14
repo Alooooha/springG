@@ -1,15 +1,17 @@
 # springG
 描述
-----
->本人根据网上博客讲解和自己心得实现的简单spring框架，意在通过项目学习源码，再由源码驱动项目。
+-----
+>springG项目是对spring中IoC源码的重新实现，省略了对IoC容器初始化无关的代码，展现IoC容器加载的全过程。
 
 起因
-----
->以前一味追求新的技术，认为搞开发的只要熟悉各种框架的使用，就很厉害。但是现在想，这不就是码农吗，可是我当程序员的初衷并不是这样啊。后来懂得，真正的大牛不是在用轮子，而是在造轮子。
+-----
+>刚开始学习spring源码，看着密密麻麻的代码，完全无从下手，在网上看了大量博客和参考有关spring的书籍后知道了refresh()是整个IoC容器初始化的入口，虽然有了教程，但光看教程也很枯燥无味，因此我决定写springG，意在通过项目学习源码，再由源码驱动项目。
 
-update(17-10-18)
+什么是SPRING框架？
 ------
---完成Resource接口及其与Bean加载过程有关实现类，在项目中以ResourceLoader加载的方式获取Resource<br>
---部分实现DefaultListableBeanFactory和BeanDefinition等重要类和接口<br>
---使用org.w3c.dom.Document作为文档对象<br>
---添加ResourceUtils、Assert等工具类<br>
+>Spring是一个轻量级的框架，在Spring这个一站式的应用平台或框架中，其中的各个模块除了依赖IoC容器和AOP之外，相互之间并没有很强的耦合性。Spring的最终目的是简化应用开发的编程模型。					                     									——《Spring技术内幕》
+
+spring中IoC容器步骤图
+------
+
+
