@@ -23,6 +23,7 @@ BeanFactory：*最基本的IoC容器，它存储了BeanDefinition、单例Bean�
 
 IOC容器的初始化过程
 ------
+![](https://github.com/Alooooha/springG/blob/master/springG1v-1p.png)
 **一、配置文件读取为Resource**
 <br>IoC容器初始化首先需要将XML配置文件加载到内存中，通过ResourceLoader.getResource(String location)方法获得XML的Resource对象.项目中只实现了DefualtResourceLoader类，它处理classpath下的资源文件，在[《张开涛——跟我学spring3第四章》](http://jinnianshilongnian.iteye.com/blog/1416320)有详细讲解。
 
