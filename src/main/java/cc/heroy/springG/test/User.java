@@ -6,6 +6,11 @@ public class User {
 	private int id;
 	private String name ;
 	private List<String> books;
+	
+	public User() {
+		this.id = 5;
+	}
+	
 	public int getId() {
 		return id;
 	}

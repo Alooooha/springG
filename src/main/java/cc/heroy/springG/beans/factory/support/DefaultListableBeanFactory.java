@@ -367,7 +367,6 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory implements C
 		if(dependsOn != null) {
 			for(String dependsOnBean :dependsOn) {
 				//注册依赖bean
-				
 				getBean(dependsOnBean);
 			}
 		}

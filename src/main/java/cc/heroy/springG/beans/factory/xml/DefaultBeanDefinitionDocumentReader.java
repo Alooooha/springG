@@ -58,7 +58,7 @@ public class DefaultBeanDefinitionDocumentReader {
 	
 	protected void doRegisterBeanDefinitions(Element root) throws Exception {
 		parseBeanDefinitions(root);
-System.out.println("解析配置文件完成!");
+//System.out.println("解析配置文件完成!");
 	}
 	
 	/**
@@ -69,7 +69,7 @@ System.out.println("解析配置文件完成!");
 	 * @throws Exception 
 	 */
 	protected void parseBeanDefinitions(Element root) throws Exception {
-		//遍历子节点
+		//遍历子节点<bean>
 		NodeList n1 = root.getChildNodes();
 		for(int i = 0; i<n1.getLength(); i++) {
 			Node node = n1.item(i);
@@ -114,8 +114,6 @@ System.out.println("解析配置文件完成!");
 		
 		//这里写注册
 		registerBeanDefinition(bdHolder);
-		
-System.out.println("注册 ！");
 	}
 	
 	/**
@@ -201,7 +199,7 @@ System.out.println("注册 ！");
 	 * 
 	 * 解析Element元素所有信息，生成并返回BeanDefinition
 	 * 
-	 * parent (子bean的属性模板)
+	 * parent属性 (子bean的属性模板)
 	 * 		1、子bean继承父bean中的属性，减少了重复代码的使用
 	 * 		2、子bean与父bean不一定是继承关系
 	 * 		3、父bean更像一个模板，子bean能够自动使用父bean中的配置
@@ -489,12 +487,15 @@ System.out.println("注册 ！");
 			String v = subElement.getTextContent();
 			return v;
 		}else if(hasListAttribute) {
-			NodeList nodeList = ele.getChildNodes();
+			NodeList nodeList = subElement.getChildNodes();
+			
 			List<String> list = new ArrayList<String>();
 			for(int i = 0; i < nodeList.getLength(); i++) {
 				Node n = nodeList.item(i);
+				if(n instanceof Element) {
 				String v = n.getTextContent();
 				list.add(v);
+				}
 			}
 			return list;
 		}

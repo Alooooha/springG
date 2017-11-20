@@ -2,8 +2,6 @@ package cc.heroy.springG.context.support;
 
 import java.io.IOException;
 
-import org.springframework.context.ApplicationContextException;
-
 import cc.heroy.springG.beans.factory.config.ConfigurableListableBeanFactory;
 import cc.heroy.springG.beans.factory.support.DefaultListableBeanFactory;
 
@@ -21,20 +19,19 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	
 	@Override
 	protected void refreshBeanFactory() {
-		// 判断BeanFactory是否存在，若存在就调用destroyBeans() 和 closeBeanFactory() 方法
-		//暂时不写
+		// 判断BeanFactory是否存在，若存在就调用destroyBeans() 和 closeBeanFactory() 方法，暂时未实现
 		
 		try {
 			//创建BeanFactory实例
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
-			//加载BeanDefinitions(里面包含)
+			//加载BeanDefinitions
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
 			}
 		}
 		catch (IOException ex) {
-			throw new ApplicationContextException("I/O 错误");
+			ex.printStackTrace();
 		}
 	}
 

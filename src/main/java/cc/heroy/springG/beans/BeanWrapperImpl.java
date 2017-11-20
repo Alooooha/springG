@@ -69,7 +69,6 @@ public class BeanWrapperImpl implements BeanWrapper{
 						//取得参数类型的Class
 						Class<?> clazz = method.getParameterTypes()[0];
 						String type = clazz.getName();
-System.out.println(type);
 						//注入属性，这里暂时只有基本类型和List类型
 					if(type.equals("java.lang.String")) {
 						method.invoke(object,(String)val);

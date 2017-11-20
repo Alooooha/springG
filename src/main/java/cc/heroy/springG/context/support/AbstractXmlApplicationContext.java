@@ -13,8 +13,6 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableA
 	/*
 	 * 源码中此方法是加载配置文件到beanFactory的入口，其中结构层次复杂，我决定根据源码流程自己实现Bean定义加载。
 	 * 自己实现Resource接口和部分相关类，在cc.heroy.springG.core.io 包
-	 * 
-	 * 
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
@@ -27,6 +25,9 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableA
 		}
 	}
 	
+	/**
+	 *	加载配置文件
+	 */
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws Exception {
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {

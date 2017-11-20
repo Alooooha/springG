@@ -21,8 +21,6 @@ public abstract class AbstractApplicationContext {
 			
 			//完成所有对非懒加载的Bean初始化（lazy-init = false）
 			finishBeanFactoryInitialization(beanFactory);
-			
-System.out.println("THE WORLD !");
 		}
 	}
 	

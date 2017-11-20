@@ -3,31 +3,31 @@
   <groupId>cc.heroy</groupId>
   <artifactId>springG</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <properties>
+ <!--  <properties>
 		<spring.version>4.2.4.RELEASE</spring.version>
 	</properties>
 
-	<!--引入项目依赖的jar包 -->
-	<!-- SpringMVC、Spring -->
-	<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+	引入项目依赖的jar包
+	SpringMVC、Spring
+	https://mvnrepository.com/artifact/org.springframework/spring-webmvc
 	<dependencies>
 	
-		<!-- https://mvnrepository.com/artifact/jstl/jstl -->
+		https://mvnrepository.com/artifact/jstl/jstl
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
 
-		<!-- junit -->
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		junit
+		https://mvnrepository.com/artifact/junit/junit
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		https://mvnrepository.com/artifact/org.springframework/spring-context
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -40,7 +40,7 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
+		https://mvnrepository.com/artifact/org.springframework/spring-tx
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
@@ -48,35 +48,35 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		https://mvnrepository.com/artifact/org.springframework/spring-core
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+		https://mvnrepository.com/artifact/org.springframework/spring-beans
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
+		https://mvnrepository.com/artifact/org.springframework/spring-web
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+		https://mvnrepository.com/artifact/org.springframework/spring-webmvc
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc-portlet -->
+		https://mvnrepository.com/artifact/org.springframework/spring-webmvc-portlet
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc-portlet</artifactId>
@@ -84,7 +84,7 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+		https://mvnrepository.com/artifact/org.springframework/spring-test
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -98,7 +98,7 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+		https://mvnrepository.com/artifact/org.springframework/spring-jdbc
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
@@ -110,7 +110,7 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.0</version>
 		</dependency>
-<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+https://mvnrepository.com/artifact/org.jsoup/jsoup
 <dependency>
     <groupId>org.jsoup</groupId>
     <artifactId>jsoup</artifactId>
@@ -119,5 +119,5 @@
 
 
 </dependencies>
-  
+   -->
 </project>

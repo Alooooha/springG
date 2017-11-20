@@ -1,7 +1,5 @@
 package cc.heroy.springG.core.io;
 
-import org.springframework.util.ClassUtils;
-
 /**
  * ResourceLoader 的一个实现类，默认资源加载器，
  * 该类默认加载  类路径资源（classpath）
@@ -33,7 +31,6 @@ public class DefaultResourceLoader implements ResourceLoader{
 			throw new Throwable("location 未按规定使用，无法解析地址！");
 		//获取路径
 		String path = location.substring(CLASSPATH_URL_PREFIX.length());
-System.out.println(path);
 		//加载classLoader
 		Resource resource = new ClassPathResource(path,classLoader);
 		return resource;
@@ -62,7 +59,7 @@ System.out.println(path);
 		}
 		if (cl == null) {
 			// No thread context class loader -> use class loader of this class.
-			cl = ClassUtils.class.getClassLoader();
+			cl = Resource.class.getClassLoader();
 			if (cl == null) {
 				// getClassLoader() returning null indicates the bootstrap ClassLoader
 				try {

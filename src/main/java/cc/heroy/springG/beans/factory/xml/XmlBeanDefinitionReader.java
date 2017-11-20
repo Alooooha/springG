@@ -43,8 +43,7 @@ public class XmlBeanDefinitionReader extends DefaultBeanDefinitionDocumentReader
 	}
 	
 	/**
-	 *	解析Resource的方法入口，源码将Resource包装成。。。。
-	 *	
+	 *	解析Resource的方法入口
 	 *	不同：
 	 *		源码中使用InputResource作为doLoadBeanDefinitions的参数。
 	 *		InputResource是InputStream的包装类，具有更多的信息，例如编码，SystemId等信息
